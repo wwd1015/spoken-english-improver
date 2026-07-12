@@ -143,7 +143,7 @@ export default function CardPractice({
           {recorder.status === "recording" ? (
             <button
               onClick={recorder.stop}
-              className="animate-pulse rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500"
+              className="animate-pulse rounded bg-red-600 px-4 py-3 text-base font-semibold text-white hover:bg-red-500 sm:py-2 sm:text-sm"
             >
               ■ Stop recording
             </button>
@@ -153,7 +153,7 @@ export default function CardPractice({
                 setGateWarning(false);
                 recorder.start();
               }}
-              className="rounded bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600"
+              className="rounded bg-red-700 px-4 py-3 text-base font-semibold text-white hover:bg-red-600 sm:py-2 sm:text-sm"
             >
               ● {recorder.status === "recorded" ? "Record again" : "Record yourself"}
             </button>
@@ -177,11 +177,11 @@ export default function CardPractice({
           <div className="text-sm text-red-400">{recorder.error}</div>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => grade(true)}
             disabled={saving}
-            className={`rounded px-5 py-2 text-sm font-semibold transition-colors ${
+            className={`flex-1 rounded px-5 py-3 text-base font-semibold transition-colors sm:flex-none sm:py-2 sm:text-sm ${
               recorder.status === "recorded"
                 ? "bg-emerald-600 text-white hover:bg-emerald-500"
                 : "bg-neutral-800 text-neutral-500"
@@ -192,7 +192,7 @@ export default function CardPractice({
           <button
             onClick={() => grade(false)}
             disabled={saving}
-            className={`rounded px-5 py-2 text-sm font-semibold transition-colors ${
+            className={`flex-1 rounded px-5 py-3 text-base font-semibold transition-colors sm:flex-none sm:py-2 sm:text-sm ${
               recorder.status === "recorded"
                 ? "bg-orange-600 text-white hover:bg-orange-500"
                 : "bg-neutral-800 text-neutral-500"
@@ -201,7 +201,7 @@ export default function CardPractice({
             Stumbled
           </button>
           {gateWarning && (
-            <span className="text-sm font-semibold text-red-400">
+            <span className="w-full text-sm font-semibold text-red-400 sm:w-auto">
               {GATE_MESSAGE}
             </span>
           )}

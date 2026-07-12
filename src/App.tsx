@@ -22,8 +22,8 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <header className="border-b border-neutral-800">
+    <div className="min-h-screen bg-neutral-950 pb-[env(safe-area-inset-bottom)] text-neutral-100">
+      <header className="border-b border-neutral-800 pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-3xl items-center gap-6 px-4 py-3">
           <h1 className="text-sm font-bold tracking-wide text-neutral-400">
             GAP TRAINER

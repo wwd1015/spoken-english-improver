@@ -27,6 +27,24 @@ Notes:
 - All data (gaps, cards, audio recordings) is stored locally in your browser's IndexedDB. No accounts, no cloud. Clearing site data deletes your deck — use the Anki CSV export as a backup.
 - Card generation uses `claude-sonnet-5` with structured outputs, so responses are guaranteed-valid JSON.
 
+## Using it on iPhone (recommended setup)
+
+iOS requires HTTPS for microphone access, so the phone needs a deployed URL — the free Vercel tier works. One-time setup, ~5 minutes:
+
+1. Go to [vercel.com](https://vercel.com) → sign in with GitHub → **Add New → Project** → import `spoken-english-improver` (pick this branch or merge it to `main` first).
+2. Before deploying, add two Environment Variables in the project settings:
+   - `ANTHROPIC_API_KEY` — your Anthropic key
+   - `APP_TOKEN` — any passcode you invent (e.g. `hufeng-2026`). The deployed URL is public; this stops strangers from spending your API credits. The app asks for it once on your phone and remembers it.
+3. Deploy. Vercel auto-detects Vite; the file `api/anthropic/v1/messages.ts` becomes a serverless proxy that injects your API key server-side (same design as local dev — the key never reaches the browser).
+4. On your iPhone: open the deployed URL in **Safari** → tap **Share → Add to Home Screen**. It installs as a full-screen app with its own icon.
+5. First recording will ask for microphone permission — allow it.
+
+iPhone notes:
+
+- The app is a PWA: Practice works offline (TTS, recording, scheduling are all on-device); only Capture needs the network.
+- Your deck lives in the on-device browser storage of the installed app. Installing to the Home Screen gives it durable storage (Safari may evict data from rarely-visited *tabs*, but not from installed apps). Still: export the Anki CSV occasionally as a backup.
+- The phone and your computer each have their own local deck — there is no sync (by design, local-first). Pick one as primary; the phone is the natural choice since gaps happen away from your desk.
+
 ## Daily loop
 
 1. **Capture** — dump a gap in the input box (Chinese, English, or mixed — messy is fine). Claude generates cards.

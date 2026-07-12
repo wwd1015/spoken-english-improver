@@ -43,7 +43,7 @@ export default function CaptureView({ onDone }: { onDone: () => void }) {
         placeholder={PLACEHOLDER}
         rows={5}
         autoFocus
-        className="w-full resize-y rounded border border-neutral-700 bg-neutral-900 p-3 text-sm placeholder-neutral-600 focus:border-neutral-400 focus:outline-none"
+        className="w-full resize-y rounded border border-neutral-700 bg-neutral-900 p-3 text-base placeholder-neutral-600 focus:border-neutral-400 focus:outline-none sm:text-sm"
       />
       <div className="flex items-center gap-3">
         <button

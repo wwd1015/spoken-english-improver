@@ -94,12 +94,47 @@ function parseDefensively(text: string): GeneratedCardSet {
   return parsed;
 }
 
+const APP_TOKEN_KEY = "gap-trainer-app-token";
+
+/**
+ * When deployed (Vercel), the serverless proxy can require a shared access
+ * code (APP_TOKEN env var) so strangers can't spend your API credits. We
+ * prompt once and remember it in localStorage. Not used in local dev.
+ */
+function getAppToken(): string | null {
+  return localStorage.getItem(APP_TOKEN_KEY);
+}
+
+function askForAppToken(): string | null {
+  const entered = window.prompt(
+    "Enter the access code for this app (the APP_TOKEN you set on the server):",
+  );
+  if (entered && entered.trim()) {
+    localStorage.setItem(APP_TOKEN_KEY, entered.trim());
+    return entered.trim();
+  }
+  return null;
+}
+
 export async function generateCards(
   gapText: string,
 ): Promise<GeneratedCardSet> {
+  return requestCards(gapText, true);
+}
+
+async function requestCards(
+  gapText: string,
+  allowTokenPrompt: boolean,
+): Promise<GeneratedCardSet> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  const appToken = getAppToken();
+  if (appToken) headers["x-app-token"] = appToken;
+
   const res = await fetch(ENDPOINT, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 8192,
@@ -118,15 +153,27 @@ export async function generateCards(
 
   if (!res.ok) {
     let detail = "";
+    let errType = "";
     try {
       const err = await res.json();
       detail = err?.error?.message ?? "";
+      errType = err?.error?.type ?? "";
     } catch {
       /* ignore */
     }
+    if (errType === "app_auth") {
+      // Deployed proxy wants the shared access code — ask once and retry.
+      if (allowTokenPrompt && askForAppToken()) {
+        return requestCards(gapText, false);
+      }
+      localStorage.removeItem(APP_TOKEN_KEY);
+      throw new Error(
+        "Wrong or missing access code. It must match the APP_TOKEN set on the server.",
+      );
+    }
     if (res.status === 401) {
       throw new Error(
-        "Authentication failed. Is ANTHROPIC_API_KEY set in .env? (restart `npm run dev` after editing .env)",
+        "Authentication failed. Is ANTHROPIC_API_KEY set? (local: .env + restart `npm run dev`; deployed: Vercel env vars)",
       );
     }
     throw new Error(`Claude API error ${res.status}: ${detail}`);
